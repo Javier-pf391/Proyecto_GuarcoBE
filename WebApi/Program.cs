@@ -2,25 +2,29 @@ using AccesoDatos.Interfaces;
 using AccesoDatos;
 using Negocio.Interfaces;
 using Negocio;
+using Microsoft.EntityFrameworkCore;
+using WebApi.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+// Configurar DbContext para usar SQLite
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("ConexionSQLite"))
+);
+
+// Registrar servicios de acceso a datos y lógica de negocio
 builder.Services.AddTransient<IDocumentos_GuarcoAD, Documentos_GuarcoAD>();
 builder.Services.AddTransient<IDocumentos_GuarcoLN, Documentos_GuarcoLN>();
 
-builder.Services.AddSingleton(builder.Configuration.GetSection("ConnectionStrings"));
-
-// Add services to the container.
-
+// Agregar servicios para controladores y Swagger
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurar el pipeline de la aplicación
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -28,9 +32,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

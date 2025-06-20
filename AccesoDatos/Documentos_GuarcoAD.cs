@@ -31,7 +31,6 @@ namespace AccesoDatos
             parameters.Add("@Documento", pDocumentos_Guarco.documento, DbType.String, ParameterDirection.Input);
             parameters.Add("@Nombre_area", pDocumentos_Guarco.nombre_area, DbType.String, ParameterDirection.Input);
             parameters.Add("@Estado", pDocumentos_Guarco.estado, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Telefono", pDocumentos_Guarco.telefono, DbType.Int32, ParameterDirection.Input);
             parameters.Add("@Fecha_inicio", pDocumentos_Guarco.Fecha_inicio, DbType.DateTime, ParameterDirection.Input);
             parameters.Add("@Fecha_finalizacion", pDocumentos_Guarco.Fecha_finalizacion, DbType.DateTime, ParameterDirection.Input);
             parameters.Add("@Fecha_revision_inicio", pDocumentos_Guarco.Fecha_revision_inicio, DbType.DateTime, ParameterDirection.Input);
@@ -123,7 +122,6 @@ namespace AccesoDatos
             parameters.Add("@Documento", pDocumentos_Guarco.documento, DbType.String, ParameterDirection.Input);
             parameters.Add("@Nombre_area", pDocumentos_Guarco.nombre_area, DbType.String, ParameterDirection.Input);
             parameters.Add("@Estado", pDocumentos_Guarco.estado, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Telefono", pDocumentos_Guarco.telefono, DbType.Int32, ParameterDirection.Input);
             parameters.Add("@Fecha_inicio", pDocumentos_Guarco.Fecha_inicio, DbType.DateTime, ParameterDirection.Input);
             parameters.Add("@Fecha_finalizacion", pDocumentos_Guarco.Fecha_finalizacion, DbType.DateTime, ParameterDirection.Input);
             parameters.Add("@Fecha_revision_inicio", pDocumentos_Guarco.Fecha_revision_inicio, DbType.DateTime, ParameterDirection.Input);

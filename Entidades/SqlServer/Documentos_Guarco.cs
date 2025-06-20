@@ -24,8 +24,6 @@ namespace Entidades.SqlServer
 
         public string estado { get; set; }
 
-        public int telefono { get; set; }
-
         public DateTime? Fecha_inicio { get; set; }
 
         public DateTime? Fecha_finalizacion { get; set; }
@@ -45,7 +43,6 @@ namespace Entidades.SqlServer
             documento = string.Empty;
             nombre_area = string.Empty;
             estado = string.Empty;
-            telefono = 0;
             Fecha_inicio = null;
             Fecha_finalizacion = null;
             Fecha_revision_inicio = null;
