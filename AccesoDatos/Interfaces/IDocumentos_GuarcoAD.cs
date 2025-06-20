@@ -22,16 +22,6 @@ namespace AccesoDatos.Interfaces
 
         bool Eliminar_documentos(int pID);
 
-        List<Documentos_Guarco> BusquedaTipo(string pTipo);
-
-        List<Documentos_Guarco> BusquedaArea(string pArea);
-
-        List<Documentos_Guarco> BusquedaEstado(string pEstado);
-
-        List<Documentos_Guarco> AprobacionCodigo(string pAproCodigo);
-
-        List<Documentos_Guarco> AprobacionTipo(string pAproTipo);
-
         List<Documentos_Guarco> AprobacionArea(string pAproArea);
     }
 }

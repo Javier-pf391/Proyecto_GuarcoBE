@@ -145,57 +145,7 @@ namespace AccesoDatos
                 return conexionSQL.Execute("PA_Eliminardocumentos", parameters, commandType: CommandType.StoredProcedure) >= 0;
             }
         }
-
-        public List<Documentos_Guarco> BusquedaTipo(string pTipo)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Tipo", pTipo, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_Consultartipo", parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public List<Documentos_Guarco> BusquedaArea(string pArea)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Nombre_area", pArea, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_ConsultarArea", parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public List<Documentos_Guarco> BusquedaEstado(string pEstado)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Estado", pEstado, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_Consultarestado", parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public List<Documentos_Guarco> AprobacionCodigo(string pAproCodigo)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Codigo", pAproCodigo, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_Consultar_aprobado_codigo", parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public List<Documentos_Guarco> AprobacionTipo(string pAproTipo)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Tipo", pAproTipo, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_Consultar_aprobado_Tipo", parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
+       
         public List<Documentos_Guarco> AprobacionArea(string pAproArea)
         {
             DynamicParameters parameters = new DynamicParameters();

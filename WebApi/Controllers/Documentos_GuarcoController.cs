@@ -80,42 +80,6 @@ namespace WebApi.Controllers
             return _iDocumentos_GuarcoLN.Eliminar_documentos(pID);
         }
 
-
-        [HttpGet]
-        [Route(nameof(BusquedaTipo))]
-        public List<Documentos_Guarco> BusquedaTipo([FromHeader] string pTipo)
-        {
-            return _iDocumentos_GuarcoLN.BusquedaTipo(pTipo);
-        }
-
-        [HttpGet]
-        [Route(nameof(BusquedaArea))]
-        public List<Documentos_Guarco> BusquedaArea([FromHeader] string pArea)
-        {
-            return _iDocumentos_GuarcoLN.BusquedaArea(pArea);
-        }
-
-        [HttpGet]
-        [Route(nameof(BusquedaEstado))]
-        public List<Documentos_Guarco> BusquedaEstado([FromHeader] string pEstado)
-        {
-            return _iDocumentos_GuarcoLN.BusquedaEstado(pEstado);
-        }
-
-        [HttpGet]
-        [Route(nameof(AprobacionCodigo))]
-        public List<Documentos_Guarco> AprobacionCodigo([FromHeader] string pAproCodigo)
-        {
-            return _iDocumentos_GuarcoLN.AprobacionCodigo(pAproCodigo);
-        }
-
-        [HttpGet]
-        [Route(nameof(AprobacionTipo))]
-        public List<Documentos_Guarco> AprobacionTipo([FromHeader] string pAproTipo)
-        {
-            return _iDocumentos_GuarcoLN.AprobacionTipo(pAproTipo);
-        }
-
         [HttpGet]
         [Route(nameof(AprobacionArea))]
         public List<Documentos_Guarco> AprobacionArea([FromHeader] string pAproArea)

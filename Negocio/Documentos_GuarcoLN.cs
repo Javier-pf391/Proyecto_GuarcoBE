@@ -61,30 +61,6 @@ namespace Negocio
             return _iDocumentos_GuarcoAD.Eliminar_documentos(pID);
         }
 
-        public List<Documentos_Guarco> BusquedaTipo(string pTipo)
-        {
-            return _iDocumentos_GuarcoAD.BusquedaTipo(pTipo);
-        }
-
-        public List<Documentos_Guarco> BusquedaArea(string pArea)
-        {
-            return _iDocumentos_GuarcoAD.BusquedaArea(pArea);
-        }
-
-        public List<Documentos_Guarco> BusquedaEstado(string pEstado)
-        {
-            return _iDocumentos_GuarcoAD.BusquedaEstado(pEstado);
-        }
-        public List<Documentos_Guarco> AprobacionCodigo(string pAproCodigo)
-        {
-            return _iDocumentos_GuarcoAD.AprobacionCodigo(pAproCodigo);
-        }
-
-        public List<Documentos_Guarco> AprobacionTipo(string pAproTipo)
-        {
-            return _iDocumentos_GuarcoAD.AprobacionTipo(pAproTipo);
-        }
-
         public List<Documentos_Guarco> AprobacionArea(string pAproArea)
         {
             return _iDocumentos_GuarcoAD.AprobacionArea(pAproArea);
