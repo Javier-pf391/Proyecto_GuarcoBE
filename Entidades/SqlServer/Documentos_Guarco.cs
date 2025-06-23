@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Entidades.SqlServer
 
     public class Documentos_Guarco
     {
+        [Key]
         public int id_documento { get; set; }
 
         public string codigo { get; set; }

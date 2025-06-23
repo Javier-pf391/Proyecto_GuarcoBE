@@ -42,6 +42,7 @@ namespace AccesoDatos
                 return conexion_SQL.Execute("PA_Agregardocumentos", parameters, commandType: CommandType.StoredProcedure) > 0;
             }
         }
+
         public List<Documentos_Guarco> ConsultarDocumentos()
         {
             using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))

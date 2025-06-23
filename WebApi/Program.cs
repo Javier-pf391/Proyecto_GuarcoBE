@@ -1,30 +1,26 @@
-using AccesoDatos.Interfaces;
 using AccesoDatos;
 using Negocio.Interfaces;
 using Negocio;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Data;
+using AccesoDatos.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Registrar DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSQLServer")));
 
-// Configurar DbContext para usar SQLite
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("ConexionSQLite"))
-);
-
-// Registrar servicios de acceso a datos y lógica de negocio
+// Registrar servicios
 builder.Services.AddTransient<IDocumentos_GuarcoAD, Documentos_GuarcoAD>();
 builder.Services.AddTransient<IDocumentos_GuarcoLN, Documentos_GuarcoLN>();
 
-// Agregar servicios para controladores y Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configurar el pipeline de la aplicación
+// Middlewares
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -33,5 +29,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
+// ?? Endpoint de prueba para la conexión a la BD
+app.MapGet("/can-connect", async (AppDbContext db) =>
+{
+    return await db.Database.CanConnectAsync()
+        ? Results.Ok("¡Conexión exitosa! ??")
+        : Results.Problem("No se pudo conectar", statusCode: 503);
+});
+
 app.MapControllers();
+
 app.Run();
