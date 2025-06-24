@@ -4,14 +4,16 @@ using Negocio.Interfaces;
 using Negocio;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using System;
+using Entidades.SqlServer;
+using System.Reflection.Emit;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Configurar DbContext para usar SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("ConexionSQLite"))
-);
+    options.UseSqlite("Data Source=Proyecto_Guarco.db"));
+
 
 // Registrar servicios de acceso a datos y lógica de negocio
 builder.Services.AddTransient<IDocumentos_GuarcoAD, Documentos_GuarcoAD>();
@@ -23,6 +25,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate(); 
+}
 
 // Configurar el pipeline de la aplicación
 if (app.Environment.IsDevelopment())
