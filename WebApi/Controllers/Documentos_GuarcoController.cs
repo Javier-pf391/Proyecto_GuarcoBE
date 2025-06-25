@@ -1,91 +1,88 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Entidades.SqlServer;
 using Negocio.Interfaces;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("api/Documentos_Guarco")]
-    public class Documentos_GuarcoController : Controller
+    [Route("api/documentos")] // usa kebab-case: api/documentos
+    public class Documentos_GuarcoController : ControllerBase
     {
-        private readonly IDocumentos_GuarcoLN _iDocumentos_GuarcoLN;
+        private readonly IDocumentos_GuarcoLN _logic;
 
-        public Documentos_GuarcoController(IDocumentos_GuarcoLN iDocumentos_GuarcoLN)
-        {
-            _iDocumentos_GuarcoLN = iDocumentos_GuarcoLN;
-        }
+        public Documentos_GuarcoController(IDocumentos_GuarcoLN logic)
+            => _logic = logic;
+
         [HttpPost]
-        [Route(nameof(Crear_documentos))]
-        public bool Crear_documentos([FromBody] Documentos_Guarco pDocumentos_Guarco)
+        public async Task<ActionResult<bool>> Crear_documentos([FromBody] Documentos_Guarco doc)
         {
-            return _iDocumentos_GuarcoLN.Crear_documentos(pDocumentos_Guarco);
-        }
-        [HttpGet]
-        [Route(nameof(ConsultarDocumentos))]
-        public List<Documentos_Guarco> ConsultarDocumentos()
-        {
-            return _iDocumentos_GuarcoLN.ConsultarDocumentos();
-        }
-        [HttpGet]
-        [Route(nameof(VerHoras))]
-        public List<Documentos_Guarco> VerHoras()
-        {
-            return _iDocumentos_GuarcoLN.VerHoras();
+            if (doc == null) return BadRequest("Documento requerido.");
+            bool ok = await _logic.Crear_documentosAsync(doc);
+            return ok ? Ok(true) : StatusCode(500, "Error al crear.");
         }
 
         [HttpGet]
-        [Route(nameof(DocumentosElaboracion))]
-        public List<Documentos_Guarco> DocumentosElaboracion()
+        public async Task<ActionResult<List<Documentos_Guarco>>> ConsultarDocumentos()
         {
-            return _iDocumentos_GuarcoLN.DocumentosElaboracion();
-        }
-        [HttpGet]
-        [Route(nameof(DocumentosRevision))]
-        public List<Documentos_Guarco> DocumentosRevision()
-        {
-            return _iDocumentos_GuarcoLN.DocumentosRevision();
-        }
-        [HttpGet]
-        [Route(nameof(DocumentosAprobado))]
-        public List<Documentos_Guarco> DocumentosAprobado()
-        {
-            return _iDocumentos_GuarcoLN.DocumentosAprobado();
+            var list = await _logic.ConsultarDocumentosAsync();
+            return (list == null || list.Count == 0) ? NotFound() : Ok(list);
         }
 
-        [HttpGet]
-        [Route(nameof(BusquedaCodigo))]
-        public List<Documentos_Guarco> BusquedaCodigo([FromHeader] string pCodigo)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Documentos_Guarco>> VerDocumento(int id)
         {
-            return _iDocumentos_GuarcoLN.BusquedaCodigo(pCodigo);
-        }
-        [HttpGet]
-        [Route(nameof(VerDocumentos))]
-        public List<Documentos_Guarco> VerDocumentos([FromHeader] int pID)
-        {
-            return _iDocumentos_GuarcoLN.VerDocumentos(pID);
+            var doc = await _logic.VerDocumentosAsync(id);
+            return doc == null ? NotFound($"No existe {id}") : Ok(doc);
         }
 
         [HttpPut]
-        [Route(nameof(Modificardocumentos))]
-        public bool Modificardocumentos([FromBody]Documentos_Guarco pDocumentos_Guarco)
+        public async Task<ActionResult<bool>> Modificar_documentos([FromBody] Documentos_Guarco doc)
         {
-            return _iDocumentos_GuarcoLN.Modificardocumentos(pDocumentos_Guarco);
-        }
-       
-        [HttpDelete]
-        [Route(nameof(Eliminar_documentos))]
-        public bool Eliminar_documentos([FromHeader] int pID)
-        {
-            return _iDocumentos_GuarcoLN.Eliminar_documentos(pID);
+            if (doc == null) return BadRequest("Documento requerido.");
+            bool ok = await _logic.Modificar_documentosAsync(doc);
+            return ok ? Ok(true) : StatusCode(500, "Error al modificar.");
         }
 
-        [HttpGet]
-        [Route(nameof(AprobacionArea))]
-        public List<Documentos_Guarco> AprobacionArea([FromHeader] string pAproArea)
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<bool>> Eliminar_documentos(int id)
         {
-            return _iDocumentos_GuarcoLN.AprobacionArea(pAproArea);
+            bool ok = await _logic.Eliminar_documentosAsync(id);
+            return ok ? Ok(true) : StatusCode(500, "Error al eliminar.");
         }
 
+        // Endpoints adicionales
+
+        [HttpGet("horas")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> VerHoras()
+            => Ok(await _logic.VerHorasAsync());
+
+        [HttpGet("elaboracion")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> DocumentosElaboracion()
+            => Ok(await _logic.DocumentosElaboracionAsync());
+
+        [HttpGet("revision")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> DocumentosRevision()
+            => Ok(await _logic.DocumentosRevisionAsync());
+
+        [HttpGet("aprobado")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> DocumentosAprobado()
+            => Ok(await _logic.DocumentosAprobadoAsync());
+
+        [HttpGet("buscar")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> BusquedaCodigo([FromQuery] string codigo)
+        {
+            if (string.IsNullOrWhiteSpace(codigo))
+                return BadRequest("Parámetro 'codigo' requerido.");
+            return Ok(await _logic.BusquedaCodigoAsync(codigo));
+        }
+
+        [HttpGet("aprobacion-area")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> AprobacionArea([FromQuery] string area = "")
+        {
+            var result = await _logic.AprobacionAreaAsync(area);
+            return Ok(result);
+        }
     }
 }

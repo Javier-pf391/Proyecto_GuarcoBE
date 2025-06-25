@@ -8,7 +8,10 @@ using Dapper;
 using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Data.Sqlite;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Runtime.InteropServices;
 
 namespace AccesoDatos
 {
@@ -21,139 +24,162 @@ namespace AccesoDatos
             _IConfiguration = iConfiguration;
         }
 
-        public bool Crear_documentos(Documentos_Guarco pDocumentos_Guarco)
+        private IDbConnection Connection => new SqliteConnection(_IConfiguration.GetConnectionString("ConexionSQLite"));
+        public async Task<bool> Crear_documentosAsync(Documentos_Guarco pDocumentos_Guarco)
         {
-            DynamicParameters parameters = new DynamicParameters();
-
-            parameters.Add("@Codigo", pDocumentos_Guarco.codigo, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Nombre", pDocumentos_Guarco.nombre, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Tipo", pDocumentos_Guarco.tipo, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Documento", pDocumentos_Guarco.documento, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Nombre_area", pDocumentos_Guarco.nombre_area, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Estado", pDocumentos_Guarco.estado, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Fecha_inicio", pDocumentos_Guarco.Fecha_inicio, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_finalizacion", pDocumentos_Guarco.Fecha_finalizacion, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_revision_inicio", pDocumentos_Guarco.Fecha_revision_inicio, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_revision_finalizacion", pDocumentos_Guarco.Fecha_revision_finalizacion, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_aprobacion", pDocumentos_Guarco.Fecha_aprobacion, DbType.DateTime, ParameterDirection.Input);
-
-            using (var conexion_SQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return conexion_SQL.Execute("PA_Agregardocumentos", parameters, commandType: CommandType.StoredProcedure) > 0;
-            }
+            using var conn = Connection;
+            string sql =@"INSERT INTO Documentos_Guarco(Codigo, Nombre, Tipo, Documento, Nombre_area, Estado, Fecha_inicio, Fecha_finalizacion, Fecha_revision_inicio, Fecha_revision_finalizacion, Fecha_aprobacion) VALUES(@codigo, @nombre, @tipo, @documento, @nombre_area, @estado, @Fecha_inicio, @Fecha_finalizacion, @Fecha_revision_inicio, @Fecha_revision_finalizacion, @Fecha_aprobacion)";
+            int rows = await conn.ExecuteAsync(sql,pDocumentos_Guarco).ConfigureAwait(false);
+            return rows > 0;
+            
         }
-        public List<Documentos_Guarco> ConsultarDocumentos()
+        public async Task<List<Documentos_Guarco>> ConsultarDocumentosAsync()
         {
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return ConexionSQL.Query<Documentos_Guarco>(
-                    "PA_ConsultarDocumentos",
-                    commandType: CommandType.StoredProcedure
-                ).ToList();
-            }
-        }
-        public List<Documentos_Guarco> VerHoras()
-        {
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return ConexionSQL.Query<Documentos_Guarco>(
-                    "PA_VerHoras",
-                    commandType: CommandType.StoredProcedure
-                ).ToList();
-            }
-        }
-
-        public List<Documentos_Guarco> BusquedaCodigo(string pCodigo)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Codigo", pCodigo, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_Consultarcodigo", parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-        public List<Documentos_Guarco> VerDocumentos(int pID)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@id_documento", pID, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_VerDocumentos", parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-        public List<Documentos_Guarco> DocumentosElaboracion()
-        {
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return ConexionSQL.Query<Documentos_Guarco>(
-                    "PA_DocumentosElaboracion",
-                    commandType: CommandType.StoredProcedure
-                ).ToList();
-            }
-        }
-        public List<Documentos_Guarco> DocumentosRevision()
-        {
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return ConexionSQL.Query<Documentos_Guarco>(
-                    "PA_DocumentosRevision",
-                    commandType: CommandType.StoredProcedure
-                ).ToList();
-            }
-        }
-        public List<Documentos_Guarco> DocumentosAprobado()
-        {
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return ConexionSQL.Query<Documentos_Guarco>(
-                    "PA_DocumentosAprobado",
-                    commandType: CommandType.StoredProcedure
-                ).ToList();
-            }
-        }
-        public bool Modificardocumentos(Documentos_Guarco pDocumentos_Guarco)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-
-            parameters.Add("@id_documento", pDocumentos_Guarco.id_documento, DbType.Int64, ParameterDirection.Input);
-            parameters.Add("@Codigo", pDocumentos_Guarco.codigo, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Nombre", pDocumentos_Guarco.nombre, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Tipo", pDocumentos_Guarco.tipo, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Documento", pDocumentos_Guarco.documento, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Nombre_area", pDocumentos_Guarco.nombre_area, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Estado", pDocumentos_Guarco.estado, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Fecha_inicio", pDocumentos_Guarco.Fecha_inicio, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_finalizacion", pDocumentos_Guarco.Fecha_finalizacion, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_revision_inicio", pDocumentos_Guarco.Fecha_revision_inicio, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_revision_finalizacion", pDocumentos_Guarco.Fecha_revision_finalizacion, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@Fecha_aprobacion", pDocumentos_Guarco.Fecha_aprobacion, DbType.DateTime, ParameterDirection.Input);
-
-            using (var conexion_SQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
-            {
-                return conexion_SQL.Execute("PA_Modificardocumentos", parameters, commandType: CommandType.StoredProcedure) > 0;
-            }
+            using var conn = Connection;
+            string sql="SELECT * FROM Documentos_Guarco";
+            var result = await conn.QueryAsync<Documentos_Guarco>(sql).ConfigureAwait(false);
+            return result.ToList();
 
         }
-
-        public bool Eliminar_documentos(int pID)
+        public async Task<List<Documentos_Guarco>> VerHorasAsync()
         {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@id_documento", pID, DbType.Int32, ParameterDirection.Input);
+            using var conn = Connection;
+            string sql = @"
+         SELECT
+          Fecha_inicio,
+          Fecha_finalizacion,
+          Fecha_revision_inicio,
+          Fecha_revision_finalizacion,
+          Fecha_aprobacion
+        FROM Documentos_Guarco";
+         var result = await conn.QueryAsync<Documentos_Guarco>(sql).ConfigureAwait(false);
+            return result.ToList();
+        }
 
-            using (var conexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
+        public async Task<List<Documentos_Guarco>>BusquedaCodigoAsync(string pCodigo)
+        {
+            using var conn = Connection; 
+            const string sql = @"SELECT * FROM Documentos_Guarco WHERE Codigo = @Codigo";
+
+            var resultado = await conn
+                .QueryAsync<Documentos_Guarco>(sql, new { Codigo = pCodigo })
+                .ConfigureAwait(false);
+
+            return resultado.ToList();
+        }
+        public async Task<List<Documentos_Guarco>> VerDocumentosAsync(int pID)
+        {
+           using var conn = Connection;
+            const string sql =@"SELECT * FROM Documentos_Guarco WHERE Id_documento = @Id_documento";
+
+            var result = await conn
+                .QueryAsync<Documentos_Guarco>(sql,new { Id_documento = pID })
+                .ConfigureAwait(false);
+            return result.ToList();
+
+        }
+        public async Task<List<Documentos_Guarco>> DocumentosElaboracionAsync()
+        {
+            using var conn = Connection;
+            string sql=@"SELECT * FROM Documentos_Guarco WHERE Estado = 'Elaboracion'";
+
+            var result = await conn
+                .QueryAsync<Documentos_Guarco> (sql).ConfigureAwait(false);
+            return result.ToList();
+
+        }
+        public async Task<List<Documentos_Guarco>> DocumentosRevisionAsync()
+        {
+            using var conn = Connection;
+            string sql = @"SELECT * FROM Documentos_Guarco WHERE Estado = 'Revision'";
+
+            var result = await conn
+                .QueryAsync<Documentos_Guarco>(sql).ConfigureAwait(false);
+            return result.ToList();
+
+        }
+        public async Task<List<Documentos_Guarco>> DocumentosAprobadoAsync()
+        {
+            using var conn = Connection;
+            string sql = @"SELECT * FROM Documentos_Guarco WHERE Estado = 'Aprobado'";
+
+
+            var result = await conn
+                .QueryAsync<Documentos_Guarco>(sql).ConfigureAwait(false);
+            return result.ToList();
+        }
+        public async Task<bool> Modificar_documentosAsync(Documentos_Guarco pDocumentos_Guarco)
+        {
+            using var conn = Connection;
             {
-                return conexionSQL.Execute("PA_Eliminardocumentos", parameters, commandType: CommandType.StoredProcedure) >= 0;
+                var parameters = new
+                {
+                    pDocumentos_Guarco.id_documento,
+                    pDocumentos_Guarco.codigo,
+                    pDocumentos_Guarco.nombre,
+                    pDocumentos_Guarco.tipo,
+                    pDocumentos_Guarco.documento,
+                    pDocumentos_Guarco.nombre_area,
+                    pDocumentos_Guarco.estado,
+                    pDocumentos_Guarco.Fecha_inicio,
+                    pDocumentos_Guarco.Fecha_finalizacion,
+                    pDocumentos_Guarco.Fecha_revision_inicio,
+                    pDocumentos_Guarco.Fecha_revision_finalizacion,
+                    pDocumentos_Guarco.Fecha_aprobacion
+                };
+
+                var sql = @"
+        UPDATE Documentos_Guarco 
+        SET 
+            Codigo = @codigo, 
+            Nombre = @nombre, 
+            Tipo = @tipo, 
+            Documento = @documento, 
+            Nombre_area = @nombre_area, 
+            Estado = @estado, 
+            Fecha_inicio = @Fecha_inicio, 
+            Fecha_finalizacion = @Fecha_finalizacion, 
+            Fecha_revision_inicio = @Fecha_revision_inicio, 
+            Fecha_revision_finalizacion = @Fecha_revision_finalizacion, 
+            Fecha_aprobacion = @Fecha_aprobacion 
+        WHERE Id_documento = @id_documento";
+
+                var result = await conn.ExecuteAsync(sql, parameters);
+                return result > 0;
             }
+
+        }
+
+        public async Task<bool> Eliminar_documentosAsync(int pID)
+        {
+            using var conn = Connection;
+
+            const string sql = @"DELETE FROM Documentos_Guarco WHERE Id_documento = @Id_documento";
+
+            var result = await conn.ExecuteAsync(sql, new { Id_documento = pID });
+            return result > 0;
         }
        
-        public List<Documentos_Guarco> AprobacionArea(string pAproArea)
+        public async Task<List<Documentos_Guarco>> AprobacionAreaAsync(string pAproArea)
         {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Nombre_area", pAproArea, DbType.String, ParameterDirection.Input);
-            using (var ConexionSQL = new SqlConnection(_IConfiguration.GetConnectionString("ConexionSQLServer")))
+            using var connection = Connection;
+
+            string sql;
+            object param;
+
+            if (string.IsNullOrWhiteSpace(pAproArea))
             {
-                return (List<Documentos_Guarco>)ConexionSQL.Query<Documentos_Guarco>("PA_Consultar_aprobado_area", parameters, commandType: CommandType.StoredProcedure);
+                sql = "SELECT * FROM Documentos_Guarco WHERE Estado = 'Aprobado'";
+                param = new { };
             }
+            else
+            {
+                sql = "SELECT * FROM Documentos_Guarco WHERE Estado = 'Aprobado' AND Nombre_area LIKE @Nombre_area";
+                param = new { Nombre_area = $"%{pAproArea}%" };
+            }
+
+            var result = await connection.QueryAsync<Documentos_Guarco>(sql, param);
+            return result.AsList();
         }
     }
 }

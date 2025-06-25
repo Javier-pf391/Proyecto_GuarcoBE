@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AccesoDatos.Interfaces;
 using Entidades.SqlServer;
@@ -11,59 +9,79 @@ namespace Negocio
 {
     public class Documentos_GuarcoLN : IDocumentos_GuarcoLN
     {
-        private IDocumentos_GuarcoAD _iDocumentos_GuarcoAD;
+        private readonly IDocumentos_GuarcoAD _repo;
 
-        public Documentos_GuarcoLN(IDocumentos_GuarcoAD iDocumentos_GuarcoAD)
+        public Documentos_GuarcoLN(IDocumentos_GuarcoAD repo)
         {
-            _iDocumentos_GuarcoAD = iDocumentos_GuarcoAD;
-        }
-        public bool Crear_documentos(Documentos_Guarco pDocumentos_Guarco)
-        {
-            return _iDocumentos_GuarcoAD.Crear_documentos(pDocumentos_Guarco);
-        }
-        public List<Documentos_Guarco>ConsultarDocumentos()
-        {
-            return _iDocumentos_GuarcoAD.ConsultarDocumentos();
-        }
-        public List<Documentos_Guarco> VerHoras()
-        {
-            return _iDocumentos_GuarcoAD.VerHoras();
+            _repo = repo;
         }
 
-        public List<Documentos_Guarco> DocumentosElaboracion()
+        public async Task<bool> Crear_documentosAsync(Documentos_Guarco doc)
         {
-            return _iDocumentos_GuarcoAD.DocumentosElaboracion();
+            return await _repo.Crear_documentosAsync(doc);
         }
-        public List<Documentos_Guarco> DocumentosRevision()
+           
+
+        public async Task<List<Documentos_Guarco>> ConsultarDocumentosAsync()
         {
-            return _iDocumentos_GuarcoAD.DocumentosRevision();
-        }
-        public List<Documentos_Guarco> DocumentosAprobado()
-        {
-            return _iDocumentos_GuarcoAD.DocumentosAprobado();
-        }
-        public List<Documentos_Guarco> BusquedaCodigo(string pCodigo)
-        {
-            return _iDocumentos_GuarcoAD.BusquedaCodigo(pCodigo);
-        }
-        public List<Documentos_Guarco> VerDocumentos(int pID)
-        {
-            return _iDocumentos_GuarcoAD.VerDocumentos(pID);
+            var resultado = await _repo.ConsultarDocumentosAsync().ConfigureAwait(false);
+            return resultado.ToList();
         }
 
-        public bool Modificardocumentos(Documentos_Guarco pDocumentos_Guarco)
+        public async Task<List<Documentos_Guarco>> VerHorasAsync()
         {
-            return _iDocumentos_GuarcoAD.Modificardocumentos(pDocumentos_Guarco);
+            var resultado = await _repo.VerHorasAsync().ConfigureAwait(false);
+            return resultado.ToList();
         }
 
-        public bool Eliminar_documentos(int pID)
+        public async Task<List<Documentos_Guarco>> DocumentosElaboracionAsync()
         {
-            return _iDocumentos_GuarcoAD.Eliminar_documentos(pID);
+            var r = await _repo.DocumentosElaboracionAsync().ConfigureAwait(false);
+            return r.ToList();
         }
 
-        public List<Documentos_Guarco> AprobacionArea(string pAproArea)
+        public async Task<List<Documentos_Guarco>> DocumentosRevisionAsync()
         {
-            return _iDocumentos_GuarcoAD.AprobacionArea(pAproArea);
+            var r = await _repo.DocumentosRevisionAsync().ConfigureAwait(false);
+            return r.ToList();
+        }
+
+        public async Task<List<Documentos_Guarco>> DocumentosAprobadoAsync()
+        {
+            var r = await _repo.DocumentosAprobadoAsync().ConfigureAwait(false);
+            return r.ToList();
+        }
+
+        public async Task<List<Documentos_Guarco>> BusquedaCodigoAsync(string codigo)
+        {
+            var r = await _repo.BusquedaCodigoAsync(codigo).ConfigureAwait(false);
+            return r.ToList();
+        }
+
+        public async Task<List<Documentos_Guarco>> VerDocumentosAsync(int id)
+        {
+            var r = await _repo.VerDocumentosAsync(id).ConfigureAwait(false);
+            return r.ToList();
+        }
+           
+
+        public async Task<bool> Modificar_documentosAsync(Documentos_Guarco doc)
+        {
+            var r = await _repo.Modificar_documentosAsync(doc).ConfigureAwait(false);
+            return r;
+        }
+           
+
+        public async Task<bool> Eliminar_documentosAsync(int id)
+        {
+            return await _repo.Eliminar_documentosAsync(id);
+        }
+           
+
+        public async Task<List<Documentos_Guarco>> AprobacionAreaAsync(string area)
+        {
+            var r = await _repo.AprobacionAreaAsync(area).ConfigureAwait(false);
+            return r.ToList();
         }
     }
 }
