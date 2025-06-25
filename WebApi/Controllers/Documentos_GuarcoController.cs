@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("api/documentos")] // usa kebab-case: api/documentos
+    [Route("api/Documentos_Guarco")] // usa kebab-case: api/documentos
     public class Documentos_GuarcoController : ControllerBase
     {
         private readonly IDocumentos_GuarcoLN _logic;
@@ -15,7 +15,7 @@ namespace WebApi.Controllers
         public Documentos_GuarcoController(IDocumentos_GuarcoLN logic)
             => _logic = logic;
 
-        [HttpPost]
+        [HttpPost("Crear_documentos")]
         public async Task<ActionResult<bool>> Crear_documentos([FromBody] Documentos_Guarco doc)
         {
             if (doc == null) return BadRequest("Documento requerido.");
@@ -23,21 +23,21 @@ namespace WebApi.Controllers
             return ok ? Ok(true) : StatusCode(500, "Error al crear.");
         }
 
-        [HttpGet]
+        [HttpGet("ConsultarDocumentos")]
         public async Task<ActionResult<List<Documentos_Guarco>>> ConsultarDocumentos()
         {
             var list = await _logic.ConsultarDocumentosAsync();
             return (list == null || list.Count == 0) ? NotFound() : Ok(list);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Documentos_Guarco>> VerDocumento(int id)
+        [HttpGet("VerDocumentos")]
+        public async Task<ActionResult<Documentos_Guarco>> VerDocumento([FromHeader]int pID)
         {
-            var doc = await _logic.VerDocumentosAsync(id);
-            return doc == null ? NotFound($"No existe {id}") : Ok(doc);
+            var doc = await _logic.VerDocumentosAsync(pID);
+            return doc == null ? NotFound($"No existe {pID}") : Ok(doc);
         }
 
-        [HttpPut]
+        [HttpPut("ModificarDocumentos")]
         public async Task<ActionResult<bool>> Modificar_documentos([FromBody] Documentos_Guarco doc)
         {
             if (doc == null) return BadRequest("Documento requerido.");
@@ -45,43 +45,43 @@ namespace WebApi.Controllers
             return ok ? Ok(true) : StatusCode(500, "Error al modificar.");
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult<bool>> Eliminar_documentos(int id)
+        [HttpDelete("Eliminar_documentos")]
+        public async Task<ActionResult<bool>> Eliminar_documentos([FromHeader]int pID)
         {
-            bool ok = await _logic.Eliminar_documentosAsync(id);
+            bool ok = await _logic.Eliminar_documentosAsync(pID);
             return ok ? Ok(true) : StatusCode(500, "Error al eliminar.");
         }
 
-        // Endpoints adicionales
+      
 
-        [HttpGet("horas")]
+        [HttpGet("VerHoras")]
         public async Task<ActionResult<List<Documentos_Guarco>>> VerHoras()
             => Ok(await _logic.VerHorasAsync());
 
-        [HttpGet("elaboracion")]
+        [HttpGet("DocumentosElaboracion")]
         public async Task<ActionResult<List<Documentos_Guarco>>> DocumentosElaboracion()
             => Ok(await _logic.DocumentosElaboracionAsync());
 
-        [HttpGet("revision")]
+        [HttpGet("DocumentosRevision")]
         public async Task<ActionResult<List<Documentos_Guarco>>> DocumentosRevision()
             => Ok(await _logic.DocumentosRevisionAsync());
 
-        [HttpGet("aprobado")]
+        [HttpGet("DocumentosAprobado")]
         public async Task<ActionResult<List<Documentos_Guarco>>> DocumentosAprobado()
             => Ok(await _logic.DocumentosAprobadoAsync());
 
-        [HttpGet("buscar")]
-        public async Task<ActionResult<List<Documentos_Guarco>>> BusquedaCodigo([FromQuery] string codigo)
+        [HttpGet("BusquedaCodigo")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> BusquedaCodigo([FromHeader] string pCodigo)
         {
-            if (string.IsNullOrWhiteSpace(codigo))
+            if (string.IsNullOrWhiteSpace(pCodigo))
                 return BadRequest("Parámetro 'codigo' requerido.");
-            return Ok(await _logic.BusquedaCodigoAsync(codigo));
+            return Ok(await _logic.BusquedaCodigoAsync(pCodigo));
         }
 
-        [HttpGet("aprobacion-area")]
-        public async Task<ActionResult<List<Documentos_Guarco>>> AprobacionArea([FromQuery] string area = "")
+        [HttpGet("AprobacionArea")]
+        public async Task<ActionResult<List<Documentos_Guarco>>> AprobacionArea([FromHeader] string pAproArea)
         {
-            var result = await _logic.AprobacionAreaAsync(area);
+            var result = await _logic.AprobacionAreaAsync(pAproArea);
             return Ok(result);
         }
     }

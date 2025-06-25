@@ -15,10 +15,10 @@ namespace Negocio.Interfaces
         Task<List<Documentos_Guarco>> DocumentosElaboracionAsync();
         Task<List<Documentos_Guarco>> DocumentosRevisionAsync();
         Task<List<Documentos_Guarco>> DocumentosAprobadoAsync();
-        Task<List<Documentos_Guarco>> BusquedaCodigoAsync(string codigo);
+        Task<List<Documentos_Guarco>> BusquedaCodigoAsync(string pCodigo);
         Task<List<Documentos_Guarco>> VerDocumentosAsync(int id);
         Task<bool> Modificar_documentosAsync(Documentos_Guarco doc);
         Task<bool> Eliminar_documentosAsync(int id);
-        Task<List<Documentos_Guarco>> AprobacionAreaAsync(string area);
+        Task<List<Documentos_Guarco>> AprobacionAreaAsync(string pAproArea);
     }
 }

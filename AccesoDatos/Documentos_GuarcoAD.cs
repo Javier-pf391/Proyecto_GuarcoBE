@@ -56,17 +56,31 @@ namespace AccesoDatos
             return result.ToList();
         }
 
-        public async Task<List<Documentos_Guarco>>BusquedaCodigoAsync(string pCodigo)
+        public async Task<List<Documentos_Guarco>> BusquedaCodigoAsync(string pCodigo)
         {
-            using var conn = Connection; 
-            const string sql = @"SELECT * FROM Documentos_Guarco WHERE Codigo = @Codigo";
+            using var conn = Connection;
+
+            string sql;
+            object parametros;
+
+            if (string.IsNullOrWhiteSpace(pCodigo))
+            {
+                sql = "SELECT * FROM Documentos_Guarco";
+                parametros = null;
+            }
+            else
+            {
+                sql = "SELECT * FROM Documentos_Guarco WHERE Codigo LIKE @Codigo";
+                parametros = new { Codigo = $"%{pCodigo}%" };
+            }
 
             var resultado = await conn
-                .QueryAsync<Documentos_Guarco>(sql, new { Codigo = pCodigo })
+                .QueryAsync<Documentos_Guarco>(sql, parametros)
                 .ConfigureAwait(false);
 
             return resultado.ToList();
         }
+
         public async Task<List<Documentos_Guarco>> VerDocumentosAsync(int pID)
         {
            using var conn = Connection;

@@ -52,9 +52,9 @@ namespace Negocio
             return r.ToList();
         }
 
-        public async Task<List<Documentos_Guarco>> BusquedaCodigoAsync(string codigo)
+        public async Task<List<Documentos_Guarco>> BusquedaCodigoAsync(string pCodigo)
         {
-            var r = await _repo.BusquedaCodigoAsync(codigo).ConfigureAwait(false);
+            var r = await _repo.BusquedaCodigoAsync(pCodigo).ConfigureAwait(false);
             return r.ToList();
         }
 
